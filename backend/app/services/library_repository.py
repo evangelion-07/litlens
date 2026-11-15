@@ -457,6 +457,23 @@ def get_evidence_documents(
     for paper in papers:
         if selected is not None and paper["id"] not in selected:
             continue
+        metadata = [f"Title: {paper['title']}"]
+        if paper.get("authors"):
+            metadata.append("Authors: " + ", ".join(paper["authors"]))
+        if paper.get("publication_year"):
+            metadata.append(f"Publication year: {paper['publication_year']}")
+        if paper.get("doi"):
+            metadata.append(f"DOI: {paper['doi']}")
+        abstracts.append({
+            "chunk_id": f"metadata:{paper['id']}",
+            "paper_id": paper["id"],
+            "title": paper["title"],
+            "page_number": None,
+            "ordinal": -2,
+            "section": "bibliographic metadata",
+            "text": "\n".join(metadata),
+            "source_kind": "metadata",
+        })
         abstract = paper.get("abstract")
         if isinstance(abstract, str) and abstract.strip():
             abstracts.append({

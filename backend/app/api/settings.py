@@ -28,6 +28,19 @@ async def installed_models():
             response = await client.get(settings["ollama_url"].rstrip("/") + "/api/tags")
             response.raise_for_status()
             models = response.json()["models"]
-        return model_readiness(settings, [{"name": m["name"], "size": m.get("size")} for m in models], True)
+            active_models = None
+            try:
+                active_response = await client.get(settings["ollama_url"].rstrip("/") + "/api/ps")
+                active_response.raise_for_status()
+                active_models = active_response.json().get("models", [])
+            except (httpx.HTTPError, ValueError, KeyError, TypeError):
+                # Older Ollama builds may not expose the loaded-model endpoint.
+                pass
+        return model_readiness(
+            settings,
+            [{"name": m["name"], "size": m.get("size")} for m in models],
+            True,
+            active_models=active_models,
+        )
     except (httpx.HTTPError, ValueError, KeyError, TypeError):
         return model_readiness(settings, [], False, "Ollama is unreachable. Start Ollama, then refresh.")

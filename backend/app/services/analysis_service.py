@@ -168,7 +168,7 @@ def _citation(item: Mapping[str, Any]) -> EvidenceCitation:
         section=SECTION_LABELS.get(section, section.replace("_", " ").title()),
         page_number=item.get("page_number"),
         source_kind=str(item.get("source_kind") or "pdf"),
-        excerpt=text[:900] + ("…" if len(text) > 900 else ""),
+        excerpt=text[:899] + ("…" if len(text) > 900 else ""),
     )
 
 

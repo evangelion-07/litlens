@@ -1,6 +1,18 @@
 import type { FormEvent, RefObject } from "react";
 import type { Preferences, Source, Turn } from "./types";
-const readable = (s: string) => s.replaceAll("_", " ");
+const answerLabel = (turn: Turn) => {
+  const answer = turn.answer_mode === "llm"
+    ? "LLM synthesis (paper + model knowledge)"
+    : turn.answer_mode === "extractive"
+      ? "Evidence passages"
+      : "No supported answer";
+  const retrieval = turn.retrieval_mode === "hybrid"
+    ? "BM25 + embeddings"
+    : turn.retrieval_mode
+      ? "BM25 only"
+      : "retrieval status unavailable";
+  return `${answer} · ${retrieval}`;
+};
 type Props = {
   settings: Preferences | null;
   useLLM: boolean;
@@ -75,7 +87,7 @@ export function PaperChat({
             <span className="message-label">
               {t.role === "user"
                 ? "YOU"
-                : `LITLENS · ${readable(t.answer_mode ?? "evidence")}`}
+                : `LITLENS · ${answerLabel(t)}`}
             </span>
             <p>{t.content}</p>
             {t.citations && (
@@ -83,7 +95,11 @@ export function PaperChat({
                 {t.citations.map((s) => (
                   <button key={s.evidence_id} onClick={() => setSource(s)}>
                     {s.evidence_id} ·{" "}
-                    {s.page_number ? `Page ${s.page_number}` : "Abstract"} ↗
+                    {s.page_number
+                      ? `Page ${s.page_number}`
+                      : s.source_kind === "metadata"
+                        ? "Metadata"
+                        : "Abstract"} ↗
                   </button>
                 ))}
               </div>

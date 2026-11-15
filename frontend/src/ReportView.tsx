@@ -45,7 +45,11 @@ export function ReportView({
               })
             }
           >
-            {source.page_number ? `p. ${source.page_number}` : "Abstract"} ·{" "}
+            {source.page_number
+              ? `p. ${source.page_number}`
+              : source.source_kind === "metadata"
+                ? "Metadata"
+                : "Abstract"} ·{" "}
             {id}
           </button>
         ) : null;
@@ -202,7 +206,11 @@ export function ReportView({
             >
               <strong>
                 {s.evidence_id} · {s.section} ·{" "}
-                {s.page_number ? `Page ${s.page_number}` : "Abstract"}
+                {s.page_number
+                  ? `Page ${s.page_number}`
+                  : s.source_kind === "metadata"
+                    ? "Metadata"
+                    : "Abstract"}
               </strong>
               <p>{s.excerpt}</p>
             </button>

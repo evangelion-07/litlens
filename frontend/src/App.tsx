@@ -134,12 +134,12 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
       }
     }
     void checkModels();
-    const timer = setInterval(checkModels, 30000);
+    const timer = setInterval(checkModels, 12000);
     return () => {
       cancelled = true;
       clearInterval(timer);
     };
-  }, [settings]);
+  }, [settings, asking, job?.status]);
   async function refresh() {
     const [library, records] = await Promise.all([
       api<{ results: Paper[] }>("/library/papers"),
@@ -444,6 +444,32 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
     onLogout();
   }
 
+  const ollamaWorking = settings?.provider === "ollama" && (
+    asking || ["queued", "running"].includes(job?.status ?? "")
+  );
+  const ollamaStatusText = !modelStatus
+    ? "checking"
+    : !modelStatus.available
+      ? "offline"
+      : !modelStatus.chat_ready
+        ? "chat model missing"
+        : ollamaWorking
+          ? "working"
+          : modelStatus.chat_loaded === true
+            ? "active"
+            : "ready";
+  const ollamaStatusTitle = !modelStatus
+    ? "Checking Ollama and the selected model"
+    : !modelStatus.available
+      ? "Ollama is not reachable. Start Ollama to use local AI."
+      : !modelStatus.chat_ready
+        ? `Ollama is running, but ${settings?.ollama_model} is not installed.`
+        : ollamaWorking
+          ? "LitLens is currently waiting for Ollama to finish a model request."
+          : modelStatus.chat_loaded === true
+            ? `Ollama is connected and ${settings?.ollama_model} is loaded in memory.`
+            : `Ollama is connected and ${settings?.ollama_model} is installed. It will load when used.`;
+
   return (
     <div className="desktop-layout">
       <aside className="sidebar">
@@ -553,12 +579,12 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
               <i />
             </span>
             <span
-              className={`model-indicator ${modelStatus?.ready ? "ready" : "unready"}`}
-              title={modelStatus?.message ?? "Checking selected local models"}
+              className={`model-indicator ${settings?.provider === "ollama" ? (ollamaStatusText === "working" ? "working" : modelStatus?.available && modelStatus.chat_ready ? "ready" : "unready") : modelStatus?.ready ? "ready" : "unready"}`}
+              title={settings?.provider === "ollama" ? ollamaStatusTitle : modelStatus?.message ?? "Checking selected local models"}
             >
               <i />
               {settings?.provider === "ollama"
-                ? `Ollama · ${settings.ollama_model}`
+                ? `Ollama · ${settings.ollama_model} · ${ollamaStatusText}${settings.embeddings_enabled && !modelStatus?.embeddings_ready ? " · embeddings missing" : ""}`
                 : settings?.provider === "api"
                   ? `API · ${settings.api_model}`
                   : "Local evidence"}

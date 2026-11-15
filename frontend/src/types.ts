@@ -21,6 +21,7 @@ export type Source = {
   paper_title: string;
   page_number: number | null;
   section?: string;
+  source_kind?: string;
   excerpt: string;
   supporting_quotes?: string[];
 };
@@ -131,6 +132,8 @@ export type ModelStatus = {
   ready: boolean;
   chat_ready: boolean;
   embeddings_ready: boolean;
+  chat_loaded: boolean | null;
+  embeddings_loaded: boolean | null;
   missing_models: string[];
   models: { name: string }[];
   message?: string;

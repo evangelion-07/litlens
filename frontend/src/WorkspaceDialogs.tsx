@@ -51,7 +51,11 @@ export function WorkspaceDialogs({
             </div>
             <h2>{source.paper_title}</h2>
             <span className="badge">
-              {source.page_number ? `Page ${source.page_number}` : "Abstract"}
+              {source.page_number
+                ? `Page ${source.page_number}`
+                : source.source_kind === "metadata"
+                  ? "Bibliographic metadata"
+                  : "Abstract"}
               {source.section ? ` · ${source.section}` : ""}
             </span>
             {source.supporting_quotes?.length ? (

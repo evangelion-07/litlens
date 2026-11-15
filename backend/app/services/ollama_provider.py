@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import httpx
+from app.services.llm_provider import LLMProviderError
 
 
 class OllamaChat:
@@ -9,17 +10,20 @@ class OllamaChat:
         self.model = model
 
     async def complete(self, system_prompt: str, user_prompt: str) -> str:
-        async with httpx.AsyncClient(timeout=httpx.Timeout(180, connect=3), trust_env=False) as client:
-            response = await client.post(self.endpoint + "/api/chat", json={
-                "model": self.model, "stream": False,
-                "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
-                "options": {"temperature": 0, "num_ctx": 8192, "num_predict": 3000},
-                **({"format": "json"} if "JSON" in system_prompt else {}),
-            })
-            response.raise_for_status()
-            content = response.json().get("message", {}).get("content", "")
+        try:
+            async with httpx.AsyncClient(timeout=httpx.Timeout(180, connect=3), trust_env=False) as client:
+                response = await client.post(self.endpoint + "/api/chat", json={
+                    "model": self.model, "stream": False,
+                    "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
+                    "options": {"temperature": 0, "num_ctx": 8192, "num_predict": 3000},
+                    **({"format": "json"} if "JSON" in system_prompt else {}),
+                })
+                response.raise_for_status()
+                content = response.json().get("message", {}).get("content", "")
+        except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+            raise LLMProviderError("The local Ollama model request failed.") from exc
         if not isinstance(content, str) or not content.strip():
-            raise ValueError("Ollama returned an empty answer.")
+            raise LLMProviderError("The local Ollama model returned an empty answer.")
         return content.strip()
 
 

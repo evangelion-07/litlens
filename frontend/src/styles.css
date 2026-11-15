@@ -524,6 +524,14 @@ pre {
   background: #63916b;
   border-radius: 50%;
 }
+.model-indicator.working i {
+  background: #d49a36;
+  animation: model-status-pulse 0.9s ease-in-out infinite alternate;
+}
+@keyframes model-status-pulse {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
 .toast {
   display: flex;
   align-items: center;

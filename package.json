@@ -1,0 +1,63 @@
+{
+  "name": "litlens-desktop",
+  "version": "1.2.2",
+  "description": "A private desktop research workspace with evidence-grounded AI",
+  "author": "LitLens",
+  "private": true,
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "start": "npm --prefix frontend run build && electron .",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "backend\\.venv\\Scripts\\python.exe -m PyInstaller --noconfirm backend-desktop.spec",
+    "build:desktop": "npm run build:frontend && npm run build:backend && electron-builder --win nsis",
+    "build:portable": "npm run build:frontend && npm run build:backend && electron-builder --win dir",
+    "test:desktop": "node --test desktop/*.test.cjs",
+    "test:ui": "node desktop/smoke.cjs"
+  },
+  "build": {
+    "appId": "org.litlens.desktop",
+    "productName": "LitLens",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "frontend/dist",
+        "to": "frontend"
+      },
+      {
+        "from": "dist/litlens-backend",
+        "to": "backend"
+      },
+      {
+        "from": "assets/litlens.ico",
+        "to": "assets/litlens.ico"
+      }
+    ],
+    "win": {
+      "icon": "assets/litlens.ico",
+      "target": [
+        "nsis"
+      ],
+      "signAndEditExecutable": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "electron": "^45.3.2",
+    "electron-builder": "^26.18.0",
+    "prettier": "^3.10.1"
+  },
+  "overrides": {
+    "minimatch@>=7 <11.0.1": "^11.0.8"
+  }
+}

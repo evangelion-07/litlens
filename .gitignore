@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node and Vite
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+
+# Local data and user-uploaded PDFs
+backend/.venv/
+data/uploads/
+data/*.sqlite3
+data/*.sqlite3-*
+data/*.db
+data/*.db-*
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Desktop builds and private profile storage
+release/
+build/
+data/profiles/
+data/accounts.sqlite3*
+tmp/
+*.log

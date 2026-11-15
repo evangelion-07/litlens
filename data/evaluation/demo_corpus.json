@@ -1,0 +1,43 @@
+{
+  "name": "LitLens synthetic retrieval smoke set",
+  "note": "Synthetic passages and labels authored only for reproducible software checks. They are not real research papers or empirical research findings.",
+  "documents": [
+    {
+      "chunk_id": "demo-plant-1",
+      "paper_id": "demo-plant",
+      "title": "Synthetic example: crop image classification",
+      "page_number": 1,
+      "ordinal": 0,
+      "text": "This synthetic passage evaluates plant leaf disease identification using image classification and a convolutional model."
+    },
+    {
+      "chunk_id": "demo-irrigation-1",
+      "paper_id": "demo-irrigation",
+      "title": "Synthetic example: irrigation planning",
+      "page_number": 2,
+      "ordinal": 0,
+      "text": "This synthetic passage estimates crop water needs and irrigation schedules from soil moisture and weather observations."
+    },
+    {
+      "chunk_id": "demo-privacy-1",
+      "paper_id": "demo-privacy",
+      "title": "Synthetic example: privacy-aware medical learning",
+      "page_number": 3,
+      "ordinal": 0,
+      "text": "This synthetic passage studies federated learning and privacy protection for sharing medical data between hospitals."
+    },
+    {
+      "chunk_id": "demo-traffic-1",
+      "paper_id": "demo-traffic",
+      "title": "Synthetic example: public transport demand",
+      "page_number": 4,
+      "ordinal": 0,
+      "text": "This synthetic passage estimates passenger traffic on a regional public transportation network."
+    }
+  ],
+  "queries": [
+    {"id": "q-plant", "query": "plant disease image classification", "relevant_chunk_ids": ["demo-plant-1"]},
+    {"id": "q-water", "query": "crop water irrigation needs", "relevant_chunk_ids": ["demo-irrigation-1"]},
+    {"id": "q-medical", "query": "federated privacy medical data", "relevant_chunk_ids": ["demo-privacy-1"]}
+  ]
+}
